@@ -1,5 +1,6 @@
 import 'package:app_kosmetik/HomePage.dart';
 import 'package:app_kosmetik/PageBoarding.dart';
+import 'package:app_kosmetik/PageLogin.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -33,8 +34,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: BoardPage(),
-      // home: PageMulai(),
+      // home: BoardPage(),
+      home: PageLogin(),
       debugShowCheckedModeBanner: false,
     );
   }

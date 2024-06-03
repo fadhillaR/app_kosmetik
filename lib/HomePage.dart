@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PageMulai extends StatefulWidget {
   const PageMulai({super.key});
@@ -9,15 +9,16 @@ class PageMulai extends StatefulWidget {
 }
 
 class _PageMulaiState extends State<PageMulai> with TickerProviderStateMixin {
-  // String? userName;
+  String? userFirst;
+  String? userLast;
   // String? userFull;
-  // String? userEmail;
+  String? userEmail;
 
-  // Future<bool> _checkLoginStatus() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   bool? isLoggedIn = prefs.getBool('isLoggedIn');
-  //   return isLoggedIn ?? false;
-  // }
+  Future<bool> _checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? isLoggedIn = prefs.getBool('isLoggedIn');
+    return isLoggedIn ?? false;
+  }
 
   // Future<void> _logout(BuildContext context) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -30,20 +31,20 @@ class _PageMulaiState extends State<PageMulai> with TickerProviderStateMixin {
   //   );
   // }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getUsername();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    getUsername();
+  }
 
-  // Future<void> getUsername() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     userName = prefs.getString('username') ?? '';
-  //     userFull = prefs.getString('fullname') ?? '';
-  //     userEmail = prefs.getString('email');
-  //   });
-  // }
+  Future<void> getUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userFirst = prefs.getString('first_name') ?? '';
+      userLast = prefs.getString('last_name') ?? '';
+      userEmail = prefs.getString('email');
+    });
+  }
 
   String capitalize(String s) {
     if (s.isEmpty) return s;
@@ -68,6 +69,17 @@ class _PageMulaiState extends State<PageMulai> with TickerProviderStateMixin {
               child: Stack(
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(25, 20, 0, 10),
+                    child: Text(
+                      userFirst != null ? 'Hi, $userFirst $userLast' : '',
+                      style: TextStyle(
+                          color: Color(0xFF424252),
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Open Sans'),
+                    ),
+                  ),
                   //card
                   Positioned(
                     top: 50,
@@ -85,9 +97,9 @@ class _PageMulaiState extends State<PageMulai> with TickerProviderStateMixin {
                           gradient: LinearGradient(
                             colors: [
                               Color(0xFFE6E6E6), // Warna transparan di pinggir
-                              Color(0xFFE6E6E6),  // Warna utama di tengah
-                              Color(0xFFE6E6E6),  // Warna utama di tengah
-                              Color(0xFFE6E6E6),  // Warna transparan di pinggir
+                              Color(0xFFE6E6E6), // Warna utama di tengah
+                              Color(0xFFE6E6E6), // Warna utama di tengah
+                              Color(0xFFE6E6E6), // Warna transparan di pinggir
                             ],
                             stops: [
                               0.1,
@@ -222,8 +234,7 @@ class _PageMulaiState extends State<PageMulai> with TickerProviderStateMixin {
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Color(0xFFE6E6E6)
-                                      .withOpacity(0.2),
+                                  color: Color(0xFFE6E6E6).withOpacity(0.2),
                                   spreadRadius: 3,
                                   blurRadius: 5,
                                   offset: Offset(0, 3),
@@ -241,7 +252,9 @@ class _PageMulaiState extends State<PageMulai> with TickerProviderStateMixin {
                               },
                               child: Column(
                                 children: [
-                                  SizedBox(height: 13,),
+                                  SizedBox(
+                                    height: 13,
+                                  ),
                                   Image.asset(
                                     'assets/b1.png',
                                     width: 150,
@@ -337,8 +350,7 @@ class _PageMulaiState extends State<PageMulai> with TickerProviderStateMixin {
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Color(0xFFE6E6E6)
-                                      .withOpacity(0.2),
+                                  color: Color(0xFFE6E6E6).withOpacity(0.2),
                                   spreadRadius: 3,
                                   blurRadius: 5,
                                   offset: Offset(0, 3),
@@ -356,7 +368,9 @@ class _PageMulaiState extends State<PageMulai> with TickerProviderStateMixin {
                               },
                               child: Column(
                                 children: [
-                                  SizedBox(height: 13,),
+                                  SizedBox(
+                                    height: 13,
+                                  ),
                                   Image.asset(
                                     'assets/b2.png',
                                     width: 150,
@@ -433,7 +447,6 @@ class _PageMulaiState extends State<PageMulai> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),

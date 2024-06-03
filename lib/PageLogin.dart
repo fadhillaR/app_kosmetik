@@ -7,7 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PageLogin extends StatefulWidget {
   const PageLogin({super.key});
@@ -17,115 +17,117 @@ class PageLogin extends StatefulWidget {
 }
 
 class _PageLoginState extends State<PageLogin> {
-  // TextEditingController txtEmail = TextEditingController();
-  // TextEditingController txtPassword = TextEditingController();
-  // GlobalKey<FormState> keyForm = GlobalKey<FormState>();
-  // // bool isLoading = true;
-  // bool isLoading = false;
+  TextEditingController txtEmail = TextEditingController();
+  TextEditingController txtPassword = TextEditingController();
+  GlobalKey<FormState> keyForm = GlobalKey<FormState>();
+  // bool isLoading = true;
+  bool isLoading = false;
   bool _obscureText = true;
 
   // Definisi regex untuk memeriksa format email
   RegExp emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-  // Future<void> _login() async {
-  //   setState(() {
-  //     isLoading = true;
-  //   });
+  Future<void> _login() async {
+    setState(() {
+      isLoading = true;
+    });
 
-  //   final email = txtEmail.text;
-  //   final password = txtPassword.text;
+    final email = txtEmail.text;
+    final password = txtPassword.text;
 
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse('http://192.168.100.6/informasiDb/login.php'),
-  //       body: {
-  //         "email": email,
-  //         "password": password,
-  //       },
-  //     );
+    try {
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:8000/api/login'),
+        body: {
+          "email": email,
+          "password": password,
+        },
+      );
 
-  //     if (response.statusCode == 200) {
-  //       final Map<String, dynamic> responseData = json.decode(response.body);
-  //       if (responseData['status'] == 'success') {
-  //         SharedPreferences prefs = await SharedPreferences.getInstance();
-  //         // String idUser = responseData['data']['id_user'];
-  //         prefs.setString('email', txtEmail.text);
-  //         prefs.setString('password', txtPassword.text);
-  //         prefs.setString('nama', responseData['data']['nama']);
-  //         prefs.setString('nohp', responseData['data']['nohp']);
-  //         prefs.setString('ktp', responseData['data']['ktp']);
-  //         prefs.setString('alamat', responseData['data']['alamat']);
-  //         prefs.setString('role', responseData['data']['role']);
-  //         prefs.setString('id_user', responseData['data']['id_user']);
-  //         // prefs.setString('idUser', idUser);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
-  //         // Navigator.pushReplacement(
-  //         //   context,
-  //         //   MaterialPageRoute(builder: (context) => BottomNavigationPage()),
-  //         // );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData['status'] == true) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('email', txtEmail.text);
+          prefs.setString('password', txtPassword.text);
+          prefs.setString('username', responseData['username']);
+          prefs.setString('first_name', responseData['first_name']);
+          prefs.setString('last_name', responseData['last_name']);
+          prefs.setString('phone', responseData['phone']);
+          prefs.setString('address', responseData['address']);
+          prefs.setString('role', responseData['role']);
+          // prefs.setString('email_verified_at', responseData['email_verified_at']);
+          prefs.setInt('id', responseData['id']);
 
-  //         String role = responseData['data']['role'];
-  //         if (role == 'admin') {
-  //           Navigator.pushReplacement(
-  //             context,
-  //             MaterialPageRoute(builder: (context) => NavigationAdmin()),
-  //           );
-  //         } else if (role == 'customer') {
-  //           Navigator.pushReplacement(
-  //             context,
-  //             MaterialPageRoute(builder: (context) => BottomNavigationPage()),
-  //           );
-  //         } else {
-  //           // Default page if role is not recognized
-  //           Navigator.pushReplacement(
-  //             context,
-  //             MaterialPageRoute(builder: (context) => BottomNavigationPage()),
-  //           );
-  //         }
-  //       } else {
-  //         showDialog(
-  //           context: context,
-  //           builder: (context) {
-  //             return AlertDialog(
-  //               title: Text('Login Gagal'),
-  //               content: Text('Email atau Password salah.'),
-  //               actions: [
-  //                 TextButton(
-  //                   onPressed: () => Navigator.pop(context),
-  //                   child: Text('OK'),
-  //                 ),
-  //               ],
-  //             );
-  //           },
-  //         );
-  //       }
-  //     } else {
-  //       throw Exception('Failed to login. Status code: ${response.statusCode}');
-  //     }
-  //   } catch (error) {
-  //     print('Error: $error');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => BottomNavigationPage()),
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Login Gagal'),
+                content: Text('Email atau Password salah.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } else if (response.statusCode == 401) {
+        final Map<String, dynamic> errorResponse = json.decode(response.body);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Login Gagal'),
+              content: Text(errorResponse['message'] ??
+                  'Email atau Password tidak sesuai.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        throw Exception('Failed to login. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error: $error');
 
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: Text('Error'),
-  //           content: Text('Terjadi kesalahan saat melakukan login.'),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () => Navigator.pop(context),
-  //               child: Text('OK'),
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     );
-  //   } finally {
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //   }
-  // }
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Terjadi kesalahan saat melakukan login.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   @override
@@ -188,7 +190,6 @@ class _PageLoginState extends State<PageLogin> {
                       // ),
                     ),
                   ),
-
                   Positioned(
                     top: 100,
                     left: 40,
@@ -197,8 +198,7 @@ class _PageLoginState extends State<PageLogin> {
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color:
-                              Colors.white,
+                          color: Colors.white,
                           width: 2.0, // Ketebalan border
                         ),
                         borderRadius: BorderRadius.only(
@@ -260,7 +260,7 @@ class _PageLoginState extends State<PageLogin> {
                                   padding: EdgeInsets.all(20),
                                   width: 350,
                                   child: Form(
-                                    // key: keyForm,
+                                    key: keyForm,
                                     autovalidateMode:
                                         AutovalidateMode.onUserInteraction,
                                     child: Column(
@@ -268,11 +268,6 @@ class _PageLoginState extends State<PageLogin> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         TextFormField(
-                                          // validator: (val) {
-                                          //   return val!.isEmpty
-                                          //       ? "Tidak Boleh kosong"
-                                          //       : null;
-                                          // },
                                           validator: (val) {
                                             if (val!.isEmpty) {
                                               return "Tidak Boleh kosong";
@@ -282,8 +277,7 @@ class _PageLoginState extends State<PageLogin> {
                                             }
                                             return null;
                                           },
-                      
-                                          // controller: txtEmail,
+                                          controller: txtEmail,
                                           decoration: InputDecoration(
                                             fillColor:
                                                 Colors.grey.withOpacity(0.2),
@@ -300,7 +294,7 @@ class _PageLoginState extends State<PageLogin> {
                                                     horizontal: 20),
                                           ),
                                         ),
-                      
+
                                         //passwordField
                                         SizedBox(
                                           height: 15,
@@ -312,7 +306,7 @@ class _PageLoginState extends State<PageLogin> {
                                                 ? "Tidak Boleh kosong"
                                                 : null;
                                           },
-                                          // controller: txtPassword,
+                                          controller: txtPassword,
                                           decoration: InputDecoration(
                                             fillColor:
                                                 Colors.grey.withOpacity(0.2),
@@ -348,57 +342,56 @@ class _PageLoginState extends State<PageLogin> {
                                   ),
                                 ),
                               ),
-                      
+
                               //button
                               SizedBox(
                                 height: 15,
                               ),
-                              // ElevatedButton(
-                              //   onPressed: isLoading ? null : () => _login(),
-                              //   child: isLoading
-                              //       ? CircularProgressIndicator()
-                              //       : Text(
-                              //           'Login',
-                              //           style: TextStyle(
-                              //               fontSize: 16, color: Colors.white),
-                              //         ),
-                              //   style: ElevatedButton.styleFrom(
-                              //     padding: EdgeInsets.symmetric(horizontal: 20),
-                              //     backgroundColor:
-                              //         Color.fromARGB(255, 85, 77, 181),
-                              //     shape: RoundedRectangleBorder(
-                              //       borderRadius: BorderRadius.circular(10),
-                              //     ),
-                              //     minimumSize: Size(260, 40),
-                              //   ),
-                              // ),
-                      
-                              // manual button
                               ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => BottomNavigationPage()));
-                                },
-                                child: Text(
-                                  'Sign In',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                                onPressed: isLoading ? null : () => _login(),
+                                child: isLoading
+                                    ? CircularProgressIndicator()
+                                    : Text(
+                                        'Sign In',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.white),
+                                      ),
                                 style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(horizontal: 20),
-                                  backgroundColor:
-                                      Color(0xFF424252),
+                                  backgroundColor: Color(0xFF424252),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   minimumSize: Size(260, 40),
                                 ),
                               ),
-                      
+
+                              // manual button
+                              // ElevatedButton(
+                              //   onPressed: () {
+                              //     Navigator.push(
+                              //         context,
+                              //         MaterialPageRoute(
+                              //             builder: (context) => BottomNavigationPage()));
+                              //   },
+                              //   child: Text(
+                              //     'Sign In',
+                              //     style: TextStyle(
+                              //       fontSize: 16,
+                              //       color: Colors.white,
+                              //     ),
+                              //   ),
+                              //   style: ElevatedButton.styleFrom(
+                              //     padding: EdgeInsets.symmetric(horizontal: 20),
+                              //     backgroundColor:
+                              //         Color(0xFF424252),
+                              //     shape: RoundedRectangleBorder(
+                              //       borderRadius: BorderRadius.circular(10),
+                              //     ),
+                              //     minimumSize: Size(260, 40),
+                              //   ),
+                              // ),
+
                               //link
                               // SizedBox(
                               //   height: 15,

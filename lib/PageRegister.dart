@@ -63,7 +63,7 @@ class _PageRegisterState extends State<PageRegister> {
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child: Container(
-          height: 630,
+          height: 1000,
           width: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -177,7 +177,7 @@ class _PageRegisterState extends State<PageRegister> {
                         color: Colors.white,
                         child: Container(
                           width: 200,
-                          height: 500,
+                          height: 1000,
                           child: Column(
                             children: [
                               SizedBox(
@@ -237,6 +237,7 @@ class _PageRegisterState extends State<PageRegister> {
                                                     horizontal: 20),
                                           ),
                                         ),
+
                                         SizedBox(
                                           height: 5,
                                         ),
@@ -269,6 +270,7 @@ class _PageRegisterState extends State<PageRegister> {
                                                     horizontal: 20),
                                           ),
                                         ),
+
                                         SizedBox(
                                           height: 5,
                                         ),
@@ -312,6 +314,123 @@ class _PageRegisterState extends State<PageRegister> {
                                             ),
                                           ),
                                         ),
+
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        TextFormField(
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                          ),
+                                          validator: (val) {
+                                            return val!.isEmpty
+                                                ? "Tidak Boleh kosong"
+                                                : null;
+                                          },
+                                          decoration: InputDecoration(
+                                            fillColor:
+                                                Colors.grey.withOpacity(0.2),
+                                            filled: true,
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide.none,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10)),
+                                            ),
+                                            hintText: 'Enter first name',
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10,
+                                                    horizontal: 20),
+                                          ),
+                                        ),
+
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        TextFormField(
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                          ),
+                                          validator: (val) {
+                                            return val!.isEmpty
+                                                ? "Tidak Boleh kosong"
+                                                : null;
+                                          },
+                                          decoration: InputDecoration(
+                                            fillColor:
+                                                Colors.grey.withOpacity(0.2),
+                                            filled: true,
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide.none,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10)),
+                                            ),
+                                            hintText: 'Enter last name',
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10,
+                                                    horizontal: 20),
+                                          ),
+                                        ),
+
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        TextFormField(
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                          ),
+                                          validator: (val) {
+                                            return val!.isEmpty
+                                                ? "Tidak Boleh kosong"
+                                                : null;
+                                          },
+                                          decoration: InputDecoration(
+                                            fillColor:
+                                                Colors.grey.withOpacity(0.2),
+                                            filled: true,
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide.none,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10)),
+                                            ),
+                                            hintText: 'Enter phone',
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10,
+                                                    horizontal: 20),
+                                          ),
+                                        ),
+
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        TextFormField(
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                          ),
+                                          validator: (val) {
+                                            return val!.isEmpty
+                                                ? "Tidak Boleh kosong"
+                                                : null;
+                                          },
+                                          decoration: InputDecoration(
+                                            fillColor:
+                                                Colors.grey.withOpacity(0.2),
+                                            filled: true,
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide.none,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10)),
+                                            ),
+                                            hintText: 'Enter address',
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 10,
+                                                    horizontal: 20),
+                                          ),
+                                        ),
+
                                         SizedBox(
                                           height: 25,
                                         ),
