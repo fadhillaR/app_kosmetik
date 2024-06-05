@@ -254,10 +254,10 @@ class _PageLoginState extends State<PageLogin> {
                               // ),
                               Padding(
                                 padding: EdgeInsets.only(
-                                    right: 10, top: 0, bottom: 10, left: 10),
+                                    right: 5, top: 0, bottom: 5, left: 5),
                                 // padding: EdgeInsets.all(10),
                                 child: Container(
-                                  padding: EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(5),
                                   width: 350,
                                   child: Form(
                                     key: keyForm,
@@ -337,6 +337,24 @@ class _PageLoginState extends State<PageLogin> {
                                             ),
                                           ),
                                         ),
+
+                                        // forgot password
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            // Handler ketika "Forgot Password" ditekan
+                                          },
+                                          child: Text(
+                                            'Forgot Password?',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Color(0xFF424252),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -393,31 +411,31 @@ class _PageLoginState extends State<PageLogin> {
                               // ),
 
                               //link
-                              // SizedBox(
-                              //   height: 15,
-                              // ),
-                              // RichText(
-                              //   text: TextSpan(
-                              //       text: "Don't have an account? ",
-                              //       style: TextStyle(
-                              //         color: Color.fromARGB(255, 85, 77, 181),
-                              //       ),
-                              //       children: [
-                              //         TextSpan(
-                              //             text: 'Sign up',
-                              //             recognizer: TapGestureRecognizer()
-                              //               ..onTap = () {
-                              //                 Navigator.push(
-                              //                     context,
-                              //                     MaterialPageRoute(
-                              //                         builder: (context) =>
-                              //                             PageRegister()));
-                              //               },
-                              //             style: TextStyle(
-                              //                 color: Colors.blue,
-                              //                 fontWeight: FontWeight.bold))
-                              //       ]),
-                              // ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                    text: "Don't have an account? ",
+                                    style: TextStyle(
+                                      color: Color(0xFF424252),
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                          text: 'Sign up',
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PageRegister()));
+                                            },
+                                          style: TextStyle(
+                                              color: Colors.blue,
+                                              fontWeight: FontWeight.bold))
+                                    ]),
+                              ),
                             ],
                           ),
                         ),

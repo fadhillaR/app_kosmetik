@@ -10,6 +10,13 @@ class PageProfil extends StatefulWidget {
 class _PageProfilState extends State<PageProfil> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("My Account"),
+      ),
+      body: Center(
+        child: const Text("Page Profil"),
+      ),
+    );
   }
 }

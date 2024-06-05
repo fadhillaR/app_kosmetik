@@ -124,7 +124,7 @@ class _PageVerifState extends State<PageVerif> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => BottomNavigationPage()));
+                                  builder: (context) => PageLogin()));
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(horizontal: 20),

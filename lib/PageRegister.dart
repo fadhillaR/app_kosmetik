@@ -15,47 +15,59 @@ class PageRegister extends StatefulWidget {
 }
 
 class _PageRegisterState extends State<PageRegister> {
-  // TextEditingController txtNama = TextEditingController();
-  // TextEditingController txtEmail = TextEditingController();
-  // TextEditingController txtNohp = TextEditingController();
-  // TextEditingController txtKtp = TextEditingController();
-  // TextEditingController txtPassword = TextEditingController();
-  // TextEditingController txtAlamat = TextEditingController();
+  TextEditingController txtUsername = TextEditingController();
+  TextEditingController txtEmail = TextEditingController();
+  TextEditingController txtPassword = TextEditingController();
+  // TextEditingController txtPassCon = TextEditingController();
+  TextEditingController txtFirst = TextEditingController();
+  TextEditingController txtLast = TextEditingController();
+  TextEditingController txtPhone = TextEditingController();
+  TextEditingController txtAddress = TextEditingController();
   // TextEditingController txtRole = TextEditingController(text: 'customer');
-  // GlobalKey<FormState> keyForm = GlobalKey<FormState>();
+  GlobalKey<FormState> keyForm = GlobalKey<FormState>();
   bool _obscureText = true;
+  // bool _obscureText1 = true;
 
   // Definisi regex untuk memeriksa format email
   RegExp emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-  // Future<int> _register() async {
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse('http://192.168.100.6/informasiDb/register.php'),
-  //       body: {
-  //         "nama": txtNama.text,
-  //         "email": txtEmail.text,
-  //         "password": txtPassword.text,
-  //         "alamat": txtAlamat.text,
-  //         "nohp": txtNohp.text,
-  //         "ktp": txtKtp.text,
-  //         "role": txtRole.text,
-  //       },
-  //     );
+  Future<int> _register() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:8000/api/register'),
+        body: {
+          "username": txtUsername.text,
+          "email": txtEmail.text,
+          "password": txtPassword.text,
+          // "password_confirmation": txtPassCon.text,
+          "first_name": txtFirst.text,
+          "last_name": txtLast.text,
+          "phone": txtPhone.text,
+          "address": txtAddress.text,
+          // "role": txtRole.text,
+        },
+      );
 
-  //     if (response.statusCode == 200) {
-  //       final responseData = jsonDecode(response.body);
-  //       final registerStatus = responseData['value'];
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final registerStatus = responseData['value'];
 
-  //       return registerStatus ?? 0;
-  //     } else {
-  //       return 0;
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //     return 0;
-  //   }
-  // }
+        return registerStatus ?? 0;
+      } else if (response.statusCode == 400) {
+        final responseData = jsonDecode(response.body);
+        final errorMessage = responseData['message'];
+        if (errorMessage == 'The given data was invalid.') {
+          return 2;
+        }
+        return 2;
+      } else {
+        return 2;
+      }
+    } catch (e) {
+      print(e);
+      return 0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,63 +101,6 @@ class _PageRegisterState extends State<PageRegister> {
               child: Stack(
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: EdgeInsets.all(5),
-                      // child: IconButton(
-                      //   onPressed: () {
-                      //     // Navigator.pushAndRemoveUntil(
-                      //     //     context,
-                      //     //     MaterialPageRoute(
-                      //     //         builder: (context) => PageLogin()),
-                      //     //     (route) => false);
-                      //   },
-                      //   icon: Container(
-                      //     decoration: BoxDecoration(
-                      //       shape: BoxShape.circle,
-                      //       border: Border.all(
-                      //         color: Colors.white, // Warna border
-                      //         width: 2, // Ketebalan border
-                      //       ),
-                      //     ),
-                      //     child: Icon(
-                      //       Icons.arrow_back,
-                      //       color: Colors.white,
-                      //     ),
-                      //   ),
-                      // ),
-                    ),
-                  ),
-
-                  //logo
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Column(
-                        //   children: [
-                        //     Align(
-                        //       alignment: Alignment.centerRight,
-                        //       child: ColorFiltered(
-                        //         colorFilter: ColorFilter.mode(
-                        //           Color.fromARGB(255, 255, 213, 97)
-                        //               .withOpacity(0.5),
-                        //           BlendMode.srcATop,
-                        //         ),
-                        //         child: Image.asset(
-                        //           'assets/bgboard.png',
-                        //           width: 200,
-                        //           height: 250,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                      ],
-                    ),
-                  ),
-
                   Positioned(
                     top: 100,
                     left: 40,
@@ -154,8 +109,7 @@ class _PageRegisterState extends State<PageRegister> {
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color:
-                              Colors.white,
+                          color: Colors.white,
                           width: 2.0, // Ketebalan border
                         ),
                         borderRadius: BorderRadius.only(
@@ -204,6 +158,7 @@ class _PageRegisterState extends State<PageRegister> {
                                 ),
                               ),
                               Form(
+                                key: keyForm,
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
                                 child: Padding(
@@ -221,6 +176,7 @@ class _PageRegisterState extends State<PageRegister> {
                                                 ? "Tidak Boleh kosong"
                                                 : null;
                                           },
+                                          controller: txtUsername,
                                           decoration: InputDecoration(
                                             fillColor:
                                                 Colors.grey.withOpacity(0.2),
@@ -237,7 +193,6 @@ class _PageRegisterState extends State<PageRegister> {
                                                     horizontal: 20),
                                           ),
                                         ),
-
                                         SizedBox(
                                           height: 5,
                                         ),
@@ -250,10 +205,11 @@ class _PageRegisterState extends State<PageRegister> {
                                               return "Tidak Boleh kosong";
                                             } else if (!emailRegex
                                                 .hasMatch(val)) {
-                                              return "ex: ex@mail.com";
+                                              return "e.g. ex@mail.com";
                                             }
                                             return null;
                                           },
+                                          controller: txtEmail,
                                           decoration: InputDecoration(
                                             fillColor:
                                                 Colors.grey.withOpacity(0.2),
@@ -270,7 +226,6 @@ class _PageRegisterState extends State<PageRegister> {
                                                     horizontal: 20),
                                           ),
                                         ),
-
                                         SizedBox(
                                           height: 5,
                                         ),
@@ -284,6 +239,7 @@ class _PageRegisterState extends State<PageRegister> {
                                                 ? "Tidak Boleh kosong"
                                                 : null;
                                           },
+                                          controller: txtPassword,
                                           decoration: InputDecoration(
                                             fillColor:
                                                 Colors.grey.withOpacity(0.2),
@@ -314,7 +270,7 @@ class _PageRegisterState extends State<PageRegister> {
                                             ),
                                           ),
                                         ),
-
+                                        
                                         SizedBox(
                                           height: 5,
                                         ),
@@ -327,6 +283,7 @@ class _PageRegisterState extends State<PageRegister> {
                                                 ? "Tidak Boleh kosong"
                                                 : null;
                                           },
+                                          controller: txtFirst,
                                           decoration: InputDecoration(
                                             fillColor:
                                                 Colors.grey.withOpacity(0.2),
@@ -343,7 +300,6 @@ class _PageRegisterState extends State<PageRegister> {
                                                     horizontal: 20),
                                           ),
                                         ),
-
                                         SizedBox(
                                           height: 5,
                                         ),
@@ -356,6 +312,7 @@ class _PageRegisterState extends State<PageRegister> {
                                                 ? "Tidak Boleh kosong"
                                                 : null;
                                           },
+                                          controller: txtLast,
                                           decoration: InputDecoration(
                                             fillColor:
                                                 Colors.grey.withOpacity(0.2),
@@ -372,7 +329,6 @@ class _PageRegisterState extends State<PageRegister> {
                                                     horizontal: 20),
                                           ),
                                         ),
-
                                         SizedBox(
                                           height: 5,
                                         ),
@@ -385,6 +341,7 @@ class _PageRegisterState extends State<PageRegister> {
                                                 ? "Tidak Boleh kosong"
                                                 : null;
                                           },
+                                          controller: txtPhone,
                                           decoration: InputDecoration(
                                             fillColor:
                                                 Colors.grey.withOpacity(0.2),
@@ -394,14 +351,13 @@ class _PageRegisterState extends State<PageRegister> {
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(10)),
                                             ),
-                                            hintText: 'Enter phone',
+                                            hintText: 'Enter phone number',
                                             contentPadding:
                                                 EdgeInsets.symmetric(
                                                     vertical: 10,
                                                     horizontal: 20),
                                           ),
                                         ),
-
                                         SizedBox(
                                           height: 5,
                                         ),
@@ -414,6 +370,7 @@ class _PageRegisterState extends State<PageRegister> {
                                                 ? "Tidak Boleh kosong"
                                                 : null;
                                           },
+                                          controller: txtAddress,
                                           decoration: InputDecoration(
                                             fillColor:
                                                 Colors.grey.withOpacity(0.2),
@@ -430,17 +387,77 @@ class _PageRegisterState extends State<PageRegister> {
                                                     horizontal: 20),
                                           ),
                                         ),
-
                                         SizedBox(
                                           height: 25,
                                         ),
                                         ElevatedButton(
                                           onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PageVerif()));
+                                            if (keyForm.currentState
+                                                    ?.validate() ==
+                                                true) {
+                                              _register()
+                                                  .then((registerStatus) {
+                                                if (registerStatus == 1) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'Berhasil didaftarkan!'),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                    ),
+                                                  );
+                                                  // Navigator
+                                                  //     .pushReplacementNamed(
+                                                  //         context,
+                                                  //         '/PageLogin');
+                                                  Navigator.pushAndRemoveUntil(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PageVerif()),
+                                                      (route) => false);
+                                                } else if (registerStatus ==
+                                                    2) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'username atau email telah digunakan!'),
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                    ),
+                                                  );
+                                                } else if (registerStatus ==
+                                                    0) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'Gagal didaftarkan'),
+                                                      backgroundColor:
+                                                          Colors.deepOrange,
+                                                    ),
+                                                  );
+                                                } else {}
+                                              }).catchError((error) {
+                                                print(
+                                                    "Error during login: $error");
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'An error occurred during login. Please try again later.'),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                              });
+                                            }
+                                            // Navigator.push(
+                                            //     context,
+                                            //     MaterialPageRoute(
+                                            //         builder: (context) =>
+                                            //             PageVerif()));
                                           },
                                           style: ElevatedButton.styleFrom(
                                             padding: EdgeInsets.symmetric(
@@ -467,8 +484,7 @@ class _PageRegisterState extends State<PageRegister> {
                                           text: TextSpan(
                                               text: "I’m already a member ",
                                               style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 85, 77, 181),
+                                                color: Color(0xFF424252),
                                               ),
                                               children: [
                                                 TextSpan(

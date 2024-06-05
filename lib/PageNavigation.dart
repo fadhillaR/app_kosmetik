@@ -1,7 +1,8 @@
 import 'package:app_kosmetik/HomePage.dart';
 import 'package:app_kosmetik/navigation/PageFav.dart';
 import 'package:app_kosmetik/navigation/PageOrder.dart';
-import 'package:app_kosmetik/navigation/PageProfil.dart';
+import 'package:app_kosmetik/navigation/PageSetting.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavigationPage extends StatefulWidget {
@@ -24,7 +25,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage>
     return Scaffold(
       body: TabBarView(
           controller: tabController,
-          children: const [PageMulai(), PageOrder(), PageFav(), PageProfil()]),
+          children: const [PageMulai(), PageOrder(), PageFav(), PageSetting()]),
       bottomNavigationBar: BottomAppBar(
         child: Container(
           decoration: BoxDecoration(
@@ -47,7 +48,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage>
                 isScrollable: true,
                 labelColor: 
                           Color.fromARGB(255, 85, 77, 181),
-                unselectedLabelColor: Color.fromARGB(255, 110, 97, 255),
+                unselectedLabelColor: Color(0xFF424252),
                 controller: tabController,
                 tabs: [
                   Tab(
@@ -59,7 +60,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage>
                   Tab(
                     icon: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust spacing here
-                      child: Icon(Icons.receipt),
+                      child: Icon(Icons.local_shipping),
                     ),
                   ),
                   Tab(
@@ -71,7 +72,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage>
                   Tab(
                     icon: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust spacing here
-                      child: Icon(Icons.person),
+                      child: Icon(Icons.settings),
                     ),
                   ),
                 ],
