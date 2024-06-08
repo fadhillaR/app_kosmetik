@@ -6,7 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavigationPage extends StatefulWidget {
-  const BottomNavigationPage({super.key});
+  final int initialIndex;
+
+  const BottomNavigationPage({super.key, this.initialIndex = 0});
   @override
   State<BottomNavigationPage> createState() => _BottomNavigationPageState();
 }
@@ -17,7 +19,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 4, vsync: this);
+    tabController = TabController(length: 4, vsync: this, initialIndex: widget.initialIndex);
   }
 
   @override

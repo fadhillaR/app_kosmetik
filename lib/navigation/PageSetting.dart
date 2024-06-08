@@ -64,7 +64,7 @@ class PageSetting extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const PageProfil(),
+                          builder: (context) => PageProfil(),
                         ),
                       );
                     },
