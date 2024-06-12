@@ -48,24 +48,43 @@ class _PageRegisterState extends State<PageRegister> {
         },
       );
 
+      // if (response.statusCode == 200) {
+      //   final responseData = jsonDecode(response.body);
+      //   final registerStatus = responseData['value'];
+
+      //   return registerStatus ?? 0;
+      // } else if (response.statusCode == 400) {
+      //   final responseData = jsonDecode(response.body);
+      //   final errorMessage = responseData['message'];
+      //   if (errorMessage == 'The given data was invalid.') {
+      //     return 2;
+      //   }
+      //   return 2;
+      // } else {
+      //   return 2;
+      // }
+
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        final registerStatus = responseData['value'];
+        final registerStatus = responseData['status'];
 
-        return registerStatus ?? 0;
-      } else if (response.statusCode == 400) {
-        final responseData = jsonDecode(response.body);
-        final errorMessage = responseData['message'];
-        if (errorMessage == 'The given data was invalid.') {
-          return 2;
+        if (registerStatus == true) {
+          // Registration successful
+          return 1;
+        } else {
+          // Registration failed, show error message
+          return 0;
         }
+      } else if (response.statusCode == 400) {
+        // Registration failed due to validation errors
         return 2;
       } else {
-        return 2;
+        // Other error occurred
+        return 3;
       }
     } catch (e) {
       print(e);
-      return 0;
+      return 4;
     }
   }
 
@@ -270,7 +289,6 @@ class _PageRegisterState extends State<PageRegister> {
                                             ),
                                           ),
                                         ),
-                                        
                                         SizedBox(
                                           height: 5,
                                         ),

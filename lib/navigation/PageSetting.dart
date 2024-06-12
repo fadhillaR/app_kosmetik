@@ -1,3 +1,4 @@
+import 'package:app_kosmetik/PageLegal.dart';
 import 'package:app_kosmetik/PageLogin.dart';
 import 'package:app_kosmetik/PageProfil.dart';
 import 'package:flutter/cupertino.dart';
@@ -69,8 +70,18 @@ class PageSetting extends StatelessWidget {
                       );
                     },
                   ),
-                  const _CustomListTile(
-                      title: "Legal & Policy", icon: CupertinoIcons.shield),
+                  _CustomListTile(
+                    title: "Legal & Policy",
+                    icon: CupertinoIcons.shield,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PageLegal(),
+                        ),
+                      );
+                    },
+                  ),
                   const _CustomListTile(
                       title: "Security", icon: CupertinoIcons.lock_shield),
                 ],
@@ -89,8 +100,7 @@ class PageSetting extends StatelessWidget {
                       CupertinoIcons.power,
                       color: Colors.red,
                     ),
-                    onTap: () async{
-                      
+                    onTap: () async {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -107,7 +117,7 @@ class PageSetting extends StatelessWidget {
                               ),
                               TextButton(
                                 child: const Text("Logout"),
-                                onPressed: () async{
+                                onPressed: () async {
                                   await _logout(context);
                                 },
                               ),

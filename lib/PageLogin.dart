@@ -59,8 +59,10 @@ class _PageLoginState extends State<PageLogin> {
           prefs.setString('phone', responseData['phone']);
           prefs.setString('address', responseData['address']);
           prefs.setString('role', responseData['role']);
+          prefs.setString('token', responseData['token']);
           // prefs.setString('email_verified_at', responseData['email_verified_at']);
-          prefs.setInt('id', responseData['id']);
+          // prefs.setInt('id', responseData['id']);
+          prefs.setInt('id_user', responseData['id']);
 
           Navigator.pushReplacement(
             context,

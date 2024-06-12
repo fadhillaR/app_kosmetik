@@ -40,7 +40,7 @@ class _PageUpdateProfilState extends State<PageUpdateProfil> {
       phoneController.text = prefs.getString('phone') ?? '';
       roleController.text = prefs.getString('role') ?? '';
       // id = prefs.getString('id');
-      id = prefs.getInt('id').toString(); // Konversi ke string
+      id = prefs.getInt('id_user').toString(); // Konversi ke string
     });
   }
 
@@ -337,7 +337,7 @@ class _PageUpdateProfilState extends State<PageUpdateProfil> {
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      id = prefs.getInt('id').toString();
+      id = prefs.getInt('id_user').toString();
 
       final response = await http.put(
         Uri.parse('http://127.0.0.1:8000/api/user-update/$id'),

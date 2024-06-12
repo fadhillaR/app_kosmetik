@@ -15,19 +15,33 @@ class BottomNavigationPage extends StatefulWidget {
 
 class _BottomNavigationPageState extends State<BottomNavigationPage>
     with SingleTickerProviderStateMixin {
-  TabController? tabController;
+  late TabController tabController;
+  late PageController pageController;
+
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 4, vsync: this, initialIndex: widget.initialIndex);
+    tabController = TabController(
+        length: 4, vsync: this, initialIndex: widget.initialIndex);
+    pageController = PageController(initialPage: widget.initialIndex);
+
+    //sinkronisasi
+    tabController.addListener(() {
+      if (tabController.indexIsChanging) {
+        pageController.jumpToPage(tabController.index);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: TabBarView(
-          controller: tabController,
-          children: const [PageMulai(), PageOrder(), PageFav(), PageSetting()]),
+      body: TabBarView(controller: tabController, children: [
+        PageMulai(pageController: pageController),
+        PageOrder(),
+        PageFav(),
+        PageSetting()
+      ]),
       bottomNavigationBar: BottomAppBar(
         child: Container(
           decoration: BoxDecoration(
@@ -48,32 +62,35 @@ class _BottomNavigationPageState extends State<BottomNavigationPage>
             children: [
               TabBar(
                 isScrollable: true,
-                labelColor: 
-                          Color.fromARGB(255, 85, 77, 181),
+                labelColor: Color.fromARGB(255, 85, 77, 181),
                 unselectedLabelColor: Color(0xFF424252),
                 controller: tabController,
                 tabs: [
                   Tab(
                     icon: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust spacing here
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.0),
                       child: Icon(Icons.home_outlined),
                     ),
                   ),
                   Tab(
                     icon: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust spacing here
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.0),
                       child: Icon(Icons.local_shipping),
                     ),
                   ),
                   Tab(
                     icon: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust spacing here
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.0),
                       child: Icon(Icons.favorite),
                     ),
                   ),
                   Tab(
                     icon: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust spacing here
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.0), // Adjust spacing here
                       child: Icon(Icons.settings),
                     ),
                   ),
@@ -87,5 +104,3 @@ class _BottomNavigationPageState extends State<BottomNavigationPage>
     );
   }
 }
-
-

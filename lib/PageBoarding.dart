@@ -28,7 +28,7 @@ class _BoardPageState extends State<BoardPage> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          height: 600,
+          height: 650,
           decoration: BoxDecoration(
               color: Color(0xFFE6E6E6),
               image: DecorationImage(
