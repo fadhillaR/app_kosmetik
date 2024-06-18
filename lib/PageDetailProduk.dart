@@ -116,7 +116,8 @@ class _PageDetailProdukState extends State<PageDetailProduk> {
         final responseBody = jsonDecode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('Validation error: ${responseBody['errors']}')),
+              // content: Text('Validation error: ${responseBody['errors']}')),
+              content: Text('Stock Not Available')),
         );
       } else if (response.statusCode == 404) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -138,27 +139,141 @@ class _PageDetailProdukState extends State<PageDetailProduk> {
   }
 
   Future<void> _toggleFavorite() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> favoriteProductIds =
-        prefs.getStringList('favoriteProducts') ?? [];
     if (_isFavorite) {
-      favoriteProductIds.remove(widget.product.id.toString());
-    } else {
-      favoriteProductIds.add(widget.product.id.toString());
+      await _removeFavorite();
+      return;
     }
-    await prefs.setStringList('favoriteProducts', favoriteProductIds);
-    setState(() {
-      _isFavorite = !_isFavorite;
-    });
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('Token not found!');
+      }
+
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:8000/api/favorite-tambah'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'product_id': widget.product.id,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        if (responseBody['status']) {
+          setState(() {
+            _isFavorite = true;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Product successfully added to favorites')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    'Failed to add product to favorites: ${responseBody['message']}')),
+          );
+        }
+      } else {
+        throw Exception('Failed to add to favorites: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error adding to favorites: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error adding to favorites: $e')),
+      );
+    }
   }
 
   Future<void> _checkIfFavorite() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> favoriteProductIds =
-        prefs.getStringList('favoriteProducts') ?? [];
-    setState(() {
-      _isFavorite = favoriteProductIds.contains(widget.product.id.toString());
-    });
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('Token not found!');
+      }
+
+      final response = await http.get(
+        Uri.parse(
+            'http://127.0.0.1:8000/api/favorite-check?product_id=${widget.product.id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        setState(() {
+          _isFavorite = responseBody['isFavorite'];
+        });
+      } else {
+        throw Exception(
+            'Failed to check favorite status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error checking favorite status: $e');
+    }
+  }
+
+  Future<void> _removeFavorite() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('Token not found!');
+      }
+
+      final response = await http.delete(
+        Uri.parse(
+            'http://127.0.0.1:8000/api/favorite-delete/${widget.product.id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        if (responseBody['status']) {
+          setState(() {
+            _isFavorite = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Product successfully removed from favorites')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    'Failed to remove product from favorites: ${responseBody['message']}')),
+          );
+        }
+      } else if (response.statusCode == 404) {
+        setState(() {
+          _isFavorite =
+              false; 
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Favorite not found')),
+        );
+      } else {
+        throw Exception(
+            'Failed to remove from favorites: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error removing from favorites: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error removing from favorites: $e')),
+      );
+    }
   }
 
   @override

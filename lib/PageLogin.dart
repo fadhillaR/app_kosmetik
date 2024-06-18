@@ -131,6 +131,36 @@ class _PageLoginState extends State<PageLogin> {
     }
   }
 
+  void _forgotPassword() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Forgot Password'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text("Enter your email to reset your password:"),
+            TextFormField(),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Submit'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   @override
   Widget build(BuildContext context) {
@@ -345,9 +375,7 @@ class _PageLoginState extends State<PageLogin> {
                                           height: 10,
                                         ),
                                         GestureDetector(
-                                          onTap: () {
-                                            // Handler ketika "Forgot Password" ditekan
-                                          },
+                                          onTap: _forgotPassword,
                                           child: Text(
                                             'Forgot Password?',
                                             style: TextStyle(

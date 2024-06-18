@@ -1,108 +1,211 @@
-import 'package:app_kosmetik/models/ModelProduk.dart';
+import 'package:app_kosmetik/models/ModelFavorite.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
-class PageFav extends StatelessWidget {
-  const PageFav({super.key});
+class PageFav extends StatefulWidget {
+  const PageFav({Key? key}) : super(key: key);
 
-  Future<List<Datum>> _loadFavoriteProducts() async {
+  @override
+  _PageFavState createState() => _PageFavState();
+}
+
+class _PageFavState extends State<PageFav> {
+  String token = '';
+  List<Datum> _favorites = [];
+  late TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> favoriteProductIds =
-        prefs.getStringList('favoriteProducts') ?? [];
-
-    // Initialize empty list to store fetched products
-    List<Datum> fetchedProducts = [];
-
-    for (String id in favoriteProductIds) {
-      Datum? product = await _fetchProductById(id);
-      if (product != null) {
-        fetchedProducts.add(product);
+    setState(() {
+      token = prefs.getString('token') ?? '';
+      if (token.isEmpty) {
+        print('Token is empty. Login process may have failed.');
+      } else {
+        _fetchFavorites();
       }
-    }
-
-    return fetchedProducts;
+    });
   }
 
-  Future<Datum?> _fetchProductById(String id) async {
-    final response =
-        await http.get(Uri.parse('http://127.0.0.1:8000/api/products/$id'));
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return Datum(
-        id: data['id'],
-        productName: data['productName'],
-        description: data['description'],
-        price: data['price'],
-        image: data['image'],
-        isFavorite: true,
-        categoryId: data['categoryId'],
-        stock: data['stock'],
-        createdAt: data['createdAt'],
-        updatedAt: data['updatedAt'],
+  Future<void> _fetchFavorites() async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/api/listFavorite'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
       );
-    } else {
-      return null;
+
+      if (response.statusCode == 200) {
+        final parsedData = modelFavoriteFromJson(response.body);
+        setState(() {
+          _favorites = parsedData.data;
+        });
+      } else {
+        throw Exception('Failed to load favorites: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching favorites: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching favorites: $e')),
+      );
     }
   }
 
-  Future<void> _removeFavorite(String id, List<Datum> favoriteProducts, Function updateState) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> favoriteProductIds =
-        prefs.getStringList('favoriteProducts') ?? [];
-    favoriteProductIds.remove(id);
-    await prefs.setStringList('favoriteProducts', favoriteProductIds);
+  String capitalize(String s) {
+    if (s.isEmpty) return s;
+    return s[0].toUpperCase() + s.substring(1);
+  }
 
-    updateState();
+  String truncateDescription(String description, int wordLimit) {
+    List<String> words = description.split(' ');
+    if (words.length <= wordLimit) {
+      return description;
+    }
+    return words.sublist(0, wordLimit).join(' ') + '...';
+  }
+
+  // filter search
+  void _filterFavorites(String query) {
+    if (query.isEmpty) {
+      _fetchFavorites();
+      return;
+    }
+
+    String lowerCaseQuery = query.toLowerCase();
+
+    setState(() {
+      _favorites = _favorites
+          .where((favorite) => favorite.product.productName
+              .toLowerCase()
+              .contains(lowerCaseQuery))
+          .toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favorite'),
+        title: Text(
+          'Favorite',
+          style: TextStyle(
+            color: Color(0xFF424252),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         automaticallyImplyLeading: false,
         centerTitle: true,
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
       ),
-      body: FutureBuilder<List<Datum>>(
-        future: _loadFavoriteProducts(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error loading favorite products'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No favorite products found'));
-          } else {
-            final favoriteProducts = snapshot.data!;
-            return ListView.builder(
-              itemCount: favoriteProducts.length,
-              itemBuilder: (context, index) {
-                final product = favoriteProducts[index];
-                return ListTile(
-                  leading: Image.network(
-                    'http://127.0.0.1:8000/image/${product.image}',
-                    width: 50,
-                    height: 50,
-                  ),
-                  title: Text(product.productName),
-                  subtitle: Text('Rp. ${product.price}'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.remove_circle_outline),
-                    onPressed: () async {
-                      await _removeFavorite(product.id.toString(), favoriteProducts, () {
-                        // trigger the FutureBuilder to rebuild
-                        (context as Element).reassemble();
-                      });
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterFavorites,
+              decoration: InputDecoration(
+                labelText: 'Search',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Color(0xFFE6E6E6)),
+                ),
+                prefixIcon: Icon(Icons.search),
+              ),
+            ),
+          ),
+          Expanded(
+            child: _favorites.isEmpty
+                ? Center(
+                    child: Text('No favorite items found'),
+                  )
+                : ListView.builder(
+                    itemCount: _favorites.length,
+                    itemBuilder: (context, index) {
+                      Datum favorite = _favorites[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Card(
+                          child: Row(
+                            children: [
+                              SizedBox(width: 5),
+                              Image.network(
+                                'http://127.0.0.1:8000/image/${favorite.product.image}',
+                                width: 110,
+                                height: 110,
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        capitalize(
+                                            favorite.product.productName),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        truncateDescription(
+                                            favorite.product.description, 20),
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            'Rp. ${favorite.product.price}',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
                     },
                   ),
-                );
-              },
-            );
-          }
-        },
+          ),
+        ],
       ),
     );
   }
