@@ -1,4 +1,5 @@
 import 'package:app_kosmetik/PageListCart.dart';
+import 'package:app_kosmetik/PageNavigation.dart';
 import 'package:app_kosmetik/models/ModelCart.dart';
 import 'package:app_kosmetik/navigation/PageOrder.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,8 @@ class _PageCheckoutState extends State<PageCheckout> {
   Future<void> _placeOrder(String methodPayment) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String cartIds = widget.selectedItems.map((item) => item.id.toString()).join(',');
+    String cartIds =
+        widget.selectedItems.map((item) => item.id.toString()).join(',');
 
     try {
       final response = await http.post(
@@ -78,11 +80,15 @@ class _PageCheckoutState extends State<PageCheckout> {
         final responseData = jsonDecode(response.body);
         if (responseData['status']) {
           Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PageOrder(), // Replace with your PageListOrder widget
-          ),
-        );
+            context,
+            // MaterialPageRoute(
+            //   builder: (context) => PageOrder(), 
+            // ),
+
+            MaterialPageRoute(
+              builder: (context) => BottomNavigationPage(initialIndex: 0),
+            ),
+          );
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Order berhasil dibuat')),
           );
@@ -236,7 +242,8 @@ class _PageCheckoutState extends State<PageCheckout> {
                     height: 50,
                   ),
                   title: Text(capitalize(item.product.productName)),
-                  subtitle: Text('Rp. ${item.product.price} x ${item.quantity}'),
+                  subtitle:
+                      Text('Rp. ${item.product.price} x ${item.quantity}'),
                   trailing: Text(
                     'Rp. ${itemTotal.toStringAsFixed(3)}',
                     style: TextStyle(fontWeight: FontWeight.bold),

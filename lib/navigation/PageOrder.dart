@@ -107,7 +107,13 @@ class _PageOrderState extends State<PageOrder> {
         child: FutureBuilder<List<Datum>>(
           future: fetchOrders(),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No order has been added.'));
+            } else {
               List<Datum> orders = snapshot.data!;
               return ListView.builder(
                 itemCount: orders.length,
@@ -209,12 +215,7 @@ class _PageOrderState extends State<PageOrder> {
                   );
                 },
               );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Error: ${snapshot.error}'),
-              );
             }
-            return Center(child: CircularProgressIndicator());
           },
         ),
       ),

@@ -71,15 +71,14 @@ class _PageRegisterState extends State<PageRegister> {
         if (registerStatus == true) {
           // Registration successful
           return 1;
+          
         } else {
-          // Registration failed, show error message
           return 0;
         }
       } else if (response.statusCode == 400) {
-        // Registration failed due to validation errors
+        // Registration failed karena validation errors
         return 2;
       } else {
-        // Other error occurred
         return 3;
       }
     } catch (e) {
@@ -420,7 +419,7 @@ class _PageRegisterState extends State<PageRegister> {
                                                       .showSnackBar(
                                                     SnackBar(
                                                       content: Text(
-                                                          'Berhasil didaftarkan!'),
+                                                          'Berhasil didaftarkan! Silakan cek email Anda untuk kode OTP.'),
                                                       backgroundColor:
                                                           Colors.green,
                                                     ),
@@ -429,12 +428,19 @@ class _PageRegisterState extends State<PageRegister> {
                                                   //     .pushReplacementNamed(
                                                   //         context,
                                                   //         '/PageLogin');
-                                                  Navigator.pushAndRemoveUntil(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              PageVerif()),
-                                                      (route) => false);
+                                                  // Navigator.pushAndRemoveUntil(
+                                                  //     context,
+                                                  //     MaterialPageRoute(
+                                                  //         builder: (context) =>
+                                                  //             PageVerif()),
+                                                  //     (route) => false);
+
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PageVerif(email: txtEmail.text,)), //pass email
+                                                  );
                                                 } else if (registerStatus ==
                                                     2) {
                                                   ScaffoldMessenger.of(context)

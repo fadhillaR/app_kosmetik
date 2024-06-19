@@ -11,13 +11,68 @@ import 'package:http/http.dart' as http;
 // import 'package:shared_preferences/shared_preferences.dart';
 
 class PageVerif extends StatefulWidget {
-  const PageVerif({super.key});
+  final String email;
+
+  const PageVerif({Key? key, required this.email}) : super(key: key);
+  // const PageVerif({super.key});
 
   @override
   State<PageVerif> createState() => _PageVerifState();
 }
 
 class _PageVerifState extends State<PageVerif> {
+  final TextEditingController _otpController = TextEditingController();
+
+
+  @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _verifyOTP() async {
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/api/verify-code'),
+      body: {
+        'email': widget.email,
+        'otp': _otpController.text,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      final status = responseData['status'];
+
+      if (status == true) {
+        // OTP verification successful
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Email berhasil diverifikasi'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PageLogin()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('OTP tidak valid atau telah kadaluarsa'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Verifikasi OTP gagal'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   @override
   Widget build(BuildContext context) {
@@ -104,7 +159,7 @@ class _PageVerifState extends State<PageVerif> {
                       ),
                       SizedBox(height: 5),
                       Text(
-                        'We have been sent your code verification',
+                        'We have sent your verification code to your email',
                         style: TextStyle(
                           color: Color(0xFF424252),
                           fontSize: 14,
@@ -113,6 +168,7 @@ class _PageVerifState extends State<PageVerif> {
                       ),
                       SizedBox(height: 30),
                       TextFormField(
+                        controller: _otpController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Enter verification code',
@@ -121,10 +177,7 @@ class _PageVerifState extends State<PageVerif> {
                       SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PageLogin()));
+                          _verifyOTP();
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(horizontal: 20),

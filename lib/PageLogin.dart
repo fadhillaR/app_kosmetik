@@ -371,20 +371,20 @@ class _PageLoginState extends State<PageLogin> {
                                         ),
 
                                         // forgot password
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        GestureDetector(
-                                          onTap: _forgotPassword,
-                                          child: Text(
-                                            'Forgot Password?',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Color(0xFF424252),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
+                                        // SizedBox(
+                                        //   height: 10,
+                                        // ),
+                                        // GestureDetector(
+                                        //   onTap: _forgotPassword,
+                                        //   child: Text(
+                                        //     'Forgot Password?',
+                                        //     style: TextStyle(
+                                        //       fontSize: 12,
+                                        //       color: Color(0xFF424252),
+                                        //       fontWeight: FontWeight.bold,
+                                        //     ),
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   ),
