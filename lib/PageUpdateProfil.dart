@@ -226,19 +226,6 @@ class _PageUpdateProfilState extends State<PageUpdateProfil> {
                                   color: Colors.black,
                                 ),
                               ),
-                              SizedBox(height: 16.0),
-                              TextFormField(
-                                controller: roleController,
-                                decoration: InputDecoration(
-                                  hintText: 'Role',
-                                  border: InputBorder.none,
-                                  hintStyle:
-                                      TextStyle(color: Colors.transparent),
-                                ),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
                               SizedBox(height: 40),
                             ],
                           ),
@@ -250,6 +237,18 @@ class _PageUpdateProfilState extends State<PageUpdateProfil> {
                         style: TextStyle(
                           fontSize: 12.0,
                           color: Color(0xFFFEFBFB),
+                        ),
+                      ),
+                      SizedBox(height: 16.0),
+                      TextFormField(
+                        controller: roleController,
+                        decoration: InputDecoration(
+                          hintText: 'Role',
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.transparent),
+                        ),
+                        style: TextStyle(
+                          color: Colors.white,
                         ),
                       ),
                       SizedBox(height: 25),
